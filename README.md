@@ -1,50 +1,72 @@
-# Welcome to your Expo app 👋
+# Water Conservation App 💧
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A mobile app for managing water conservation in residential estates. Built with React Native + Expo as part of my internship project.
 
-## Get started
+## What it does
 
-1. Install dependencies
+- Estate admins can set up their account, register estate details, and add residents
+- Location-based estate mapping with search functionality
+- Dashboard to manage addresses and residents
+- Works on both Android (via Expo Go or standalone APK) and web
 
+## Screenshots
+
+Coming soon — will add once the final build is ready.
+
+## Tech Stack
+
+- **React Native** with Expo SDK 54
+- **Expo Router** for file-based navigation
+- **Drawer navigation** for the main app section
+- **TypeScript** throughout
+
+## How to run locally
+
+1. Clone the repo:
+   ```bash
+   git clone https://github.com/vaibhavmalhotra002/water-conservation-app.git
+   cd water-conservation-app
+   ```
+
+2. Install dependencies:
    ```bash
    npm install
    ```
 
-2. Start the app
-
+3. Start the dev server:
    ```bash
    npx expo start
    ```
 
-In the output, you'll find options to open the app in a
+4. Open in Expo Go (scan the QR code) or press `w` to open in browser.
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Building the APK
 
 ```bash
-npm run reset-project
+npx eas-cli build --platform android --profile preview
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+This will queue a build on EAS and give you a download link when done.
 
-## Learn more
+## Project Structure
 
-To learn more about developing your project with Expo, look at the following resources:
+```
+app/
+├── (auth)/          # Onboarding screens (password, estate, address, location, residents)
+├── (main)/          # Main app screens (dashboard with drawer nav)
+├── _layout.tsx      # Root layout
+└── index.tsx        # Entry point (redirects to onboarding)
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+components/          # Reusable UI components
+constants/           # Colors and theme config
+```
 
-## Join the community
+## Notes
 
-Join our community of developers creating universal apps.
+- The map component has a fallback view for web since `react-native-maps` doesn't support web
+- The drawer navigation uses `@react-navigation/drawer` under the hood
+- Built and tested on Expo Go (Android) and web browser
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## License
+
+This project was built for educational/internship purposes.
