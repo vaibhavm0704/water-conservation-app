@@ -41,3 +41,10 @@ app-example
 # generated native folders
 /ios
 /android
+
+# IDE
+.vscode/
+
+# build artifacts
+build_info.json
+builds.json
