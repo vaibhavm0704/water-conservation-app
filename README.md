@@ -1,72 +1,110 @@
-# Water Conservation App 💧
+# AquaEstate – Smart Water Conservation & Estate Management App
 
-A mobile app for managing water conservation in residential estates. Built with React Native + Expo as part of my internship project.
+AquaEstate is a frontend-only React Native mobile application built with Expo SDK, designed for residential estates and smart communities. It provides tools to track water usage, manage residents, report and resolve facility complaints, and publish community notices.
 
-## What it does
+This project is built as an **MCA Final Semester Major Project** and an **internship project for DALM Solutions Pvt. Ltd.**
 
-- Estate admins can set up their account, register estate details, and add residents
-- Location-based estate mapping with search functionality
-- Dashboard to manage addresses and residents
-- Works on both Android (via Expo Go or standalone APK) and web
+---
 
-## Screenshots
+## 🌟 Key Features
 
-Coming soon — will add once the final build is ready.
+### 1. Multi-Role Dashboards & Workflows
+* **Estate Admin**:
+  * View overall community water usage statistics and metrics.
+  * Manage residents (add, update, view, or remove).
+  * Access property details (block and flat listings).
+  * Generate water usage and complaints reports.
+* **Facility Admin**:
+  * Track active/pending maintenance issues.
+  * Manage and resolve resident complaints (assign staff, add resolution notes).
+  * Publish water schedules, cleaning alerts, and shutdown notices.
+* **Resident**:
+  * Monitor daily, weekly, and monthly water usage.
+  * Pay water bills and view transaction history.
+  * Raise maintenance tickets with image attachment support.
+  * View water conservation tips and score.
 
-## Tech Stack
+### 2. Beautiful & Premium UI Design
+* Water-inspired color palette (Ocean Blue, Light Aqua, Mint Green, Deep Water).
+* Typography powered by **Poppins** font.
+* Clean, interactive charts showing usage analytics.
+* Smooth micro-animations and tab navigation.
+* Responsive layouts designed for both Android and iOS devices.
 
-- **React Native** with Expo SDK 54
-- **Expo Router** for file-based navigation
-- **Drawer navigation** for the main app section
-- **TypeScript** throughout
+---
 
-## How to run locally
+## 🛠️ Technology Stack
 
-1. Clone the repo:
-   ```bash
-   git clone https://github.com/vaibhavmalhotra002/water-conservation-app.git
-   cd water-conservation-app
-   ```
+* **Framework**: React Native (Expo SDK)
+* **Language**: TypeScript
+* **Navigation**: React Navigation (Stack and Bottom Tabs)
+* **Styling**: StyleSheet API (Vanilla CSS equivalent)
+* **Charts**: `react-native-chart-kit` and `react-native-svg`
+* **Icons**: `@expo/vector-icons` (Ionicons, MaterialCommunityIcons)
+* **Media Handling**: `expo-image-picker` and `expo-image`
+* **State & Context**: React Context (Auth, Theme, and Notifications)
+* **Storage**: `@react-native-async-storage/async-storage`
 
-2. Install dependencies:
+---
+
+## 📁 Project Structure
+
+```text
+water-conservation-app/
+├── assets/                     # App assets (icons, splash screens)
+├── src/
+│   ├── api/                    # Mock API clients and endpoints
+│   ├── config/                 # App configuration & Mock credentials
+│   ├── context/                # Context Providers (Auth, Theme, Notifications)
+│   ├── features/               # Feature-based folders
+│   │   ├── auth/               # Splash, Onboarding, Login, Forgot Password
+│   │   ├── estate-admin/       # Estate Admin Screens & Services
+│   │   ├── facility-admin/     # Facility Admin Screens & Services
+│   │   └── resident/           # Resident Screens & Services
+│   ├── navigation/             # Auth and role-based Navigators
+│   └── shared/                 # Shared resources
+│       ├── components/         # Reusable UI components (AppButton, SummaryCard, etc.)
+│       └── constants/          # App theme (colors, spacing, typography)
+├── App.tsx                     # Entry point re-export
+└── package.json                # Project dependencies
+```
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+Ensure you have Node.js installed on your machine.
+
+### Installation
+
+1. Install dependencies:
    ```bash
    npm install
    ```
 
-3. Start the dev server:
+2. Start the Expo development server:
    ```bash
    npx expo start
    ```
 
-4. Open in Expo Go (scan the QR code) or press `w` to open in browser.
+3. Open the app:
+   * Scan the QR code using the **Expo Go** app on your iOS or Android device.
+   * Or press `a` to run on an Android Emulator, or `i` to run on an iOS Simulator.
 
-## Building the APK
+### 🔑 Mock Credentials (For Testing)
 
-```bash
-npx eas-cli build --platform android --profile preview
-```
+To log into different roles on the Login screen, use these mock credentials:
 
-This will queue a build on EAS and give you a download link when done.
+| Role | Email | Password |
+|------|-------|----------|
+| **Estate Admin** | `admin@greenville.com` | `admin123` |
+| **Facility Admin** | `facility@greenville.com` | `facility123` |
+| **Resident** | `resident@greenville.com` | `resident123` |
 
-## Project Structure
+---
 
-```
-app/
-├── (auth)/          # Onboarding screens (password, estate, address, location, residents)
-├── (main)/          # Main app screens (dashboard with drawer nav)
-├── _layout.tsx      # Root layout
-└── index.tsx        # Entry point (redirects to onboarding)
-
-components/          # Reusable UI components
-constants/           # Colors and theme config
-```
-
-## Notes
-
-- The map component has a fallback view for web since `react-native-maps` doesn't support web
-- The drawer navigation uses `@react-navigation/drawer` under the hood
-- Built and tested on Expo Go (Android) and web browser
-
-## License
-
-This project was built for educational/internship purposes.
+## 👨‍💻 Developed for
+* **Company**: DALM Solutions Pvt. Ltd. (Internship Project)
+* **Course**: MCA Final Semester Major Project
