@@ -18,6 +18,8 @@ import {
   FONT_FAMILY,
   FONT_SIZE,
 } from '../../../shared/constants/theme';
+import { useAuth } from '../../../context/AuthContext';
+import { useNotifications } from '../../../context/NotificationContext';
 
 // ── Info Row ───────────────────────────────────────────────────────────
 
@@ -49,9 +51,8 @@ const ToggleRow: React.FC<{
 // ── Main Component ─────────────────────────────────────────────────────
 
 const ProfileScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
-  // Notification preferences
-  const [pushEnabled, setPushEnabled] = useState(true);
-  const [emailEnabled, setEmailEnabled] = useState(true);
+  const { user, logout } = useAuth();
+  const { pushEnabled, emailEnabled, togglePush, toggleEmail } = useNotifications();
 
   // Complaint category toggles
   const [categories, setCategories] = useState([
@@ -74,10 +75,12 @@ const ProfileScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
       {
         text: 'Logout',
         style: 'destructive',
-        onPress: () => {
-          // useAuth().logout would be called here
-          // For now, just show confirmation
-          Alert.alert('Logged out', 'You have been logged out successfully.');
+        onPress: async () => {
+          try {
+            await logout();
+          } catch (error) {
+            Alert.alert('Error', 'Failed to logout. Please try again.');
+          }
         },
       },
     ]);
@@ -94,7 +97,7 @@ const ProfileScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
         <View style={styles.avatar}>
           <Ionicons name="person" size={36} color={COLORS.primary} />
         </View>
-        <Text style={styles.profileName}>Admin User</Text>
+        <Text style={styles.profileName}>{user?.name || 'Admin User'}</Text>
         <View style={styles.roleBadge}>
           <MaterialCommunityIcons name="shield-crown" size={14} color={COLORS.primary} />
           <Text style={styles.roleText}>Estate Administrator</Text>
@@ -150,12 +153,12 @@ const ProfileScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
         <ToggleRow
           label="Push Notifications"
           value={pushEnabled}
-          onToggle={setPushEnabled}
+          onToggle={togglePush}
         />
         <ToggleRow
           label="Email Notifications"
           value={emailEnabled}
-          onToggle={setEmailEnabled}
+          onToggle={toggleEmail}
         />
       </View>
 

@@ -27,9 +27,8 @@ import {
 import { Bill } from '../types/residentTypes';
 import { getBills, downloadBill } from '../services/residentService';
 
-// Placeholder hooks — these will come from context providers
-// import { useAuth } from '../../../context/AuthContext';
-// import { useNotifications } from '../../../context/NotificationContext';
+import { useAuth } from '../../../context/AuthContext';
+import { useNotifications } from '../../../context/NotificationContext';
 
 // ── Status badge helper ──────────────────────────────────────
 const statusColor = (s: Bill['status']) => {
@@ -43,14 +42,23 @@ const statusColor = (s: Bill['status']) => {
   }
 };
 
-// ── Profile Screen ───────────────────────────────────────────
 const ProfileScreen: React.FC = () => {
+  const { user, logout } = useAuth();
+  const { pushEnabled, emailEnabled, togglePush, toggleEmail } = useNotifications();
   const [bills, setBills] = useState<Bill[]>([]);
-  const [pushEnabled, setPushEnabled] = useState(true);
-  const [emailEnabled, setEmailEnabled] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  const getInitials = (name: string): string => {
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
+  };
+  const initials = user?.name ? getInitials(user.name) : 'RS';
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -83,9 +91,12 @@ const ProfileScreen: React.FC = () => {
       {
         text: 'Logout',
         style: 'destructive',
-        onPress: () => {
-          // useAuth().logout();
-          Alert.alert('Logged out', 'You have been logged out successfully.');
+        onPress: async () => {
+          try {
+            await logout();
+          } catch (error) {
+            Alert.alert('Error', 'Failed to logout. Please try again.');
+          }
         },
       },
     ]);
@@ -103,9 +114,9 @@ const ProfileScreen: React.FC = () => {
           {/* ── Profile Header ──────────────────────────────── */}
           <View style={styles.profileHeader}>
             <View style={styles.avatarLarge}>
-              <Text style={styles.avatarInitials}>RS</Text>
+              <Text style={styles.avatarInitials}>{initials}</Text>
             </View>
-            <Text style={styles.profileName}>Rahul Sharma</Text>
+            <Text style={styles.profileName}>{user?.name || 'Rahul Sharma'}</Text>
             <View style={styles.badgeRow}>
               <View style={styles.roleBadge}>
                 <Ionicons name="person" size={12} color={COLORS.primary} />
@@ -113,7 +124,7 @@ const ProfileScreen: React.FC = () => {
               </View>
               <View style={styles.flatBadge}>
                 <Ionicons name="home" size={12} color={COLORS.ocean} />
-                <Text style={styles.flatBadgeText}>A-101</Text>
+                <Text style={styles.flatBadgeText}>{user?.flatNumber || 'A-101'}</Text>
               </View>
             </View>
           </View>
@@ -124,22 +135,22 @@ const ProfileScreen: React.FC = () => {
             <DetailRow
               icon="person-outline"
               label="Name"
-              value="Rahul Sharma"
+              value={user?.name || 'Rahul Sharma'}
             />
             <DetailRow
               icon="call-outline"
               label="Phone"
-              value="+91 98765 43210"
+              value={user?.phone || '+91 98765 43210'}
             />
             <DetailRow
               icon="mail-outline"
               label="Email"
-              value="rahul.sharma@email.com"
+              value={user?.email || 'rahul.sharma@email.com'}
             />
             <DetailRow
               icon="home-outline"
               label="Flat"
-              value="A-101, GreenVille Estate"
+              value={`${user?.flatNumber || 'A-101'}, ${user?.estateName || 'GreenVille Estate'}`}
               last
             />
           </View>
@@ -204,7 +215,7 @@ const ProfileScreen: React.FC = () => {
               </View>
               <Switch
                 value={pushEnabled}
-                onValueChange={setPushEnabled}
+                onValueChange={togglePush}
                 trackColor={{
                   false: COLORS.border,
                   true: COLORS.primaryLight,
@@ -223,7 +234,7 @@ const ProfileScreen: React.FC = () => {
               </View>
               <Switch
                 value={emailEnabled}
-                onValueChange={setEmailEnabled}
+                onValueChange={toggleEmail}
                 trackColor={{
                   false: COLORS.border,
                   true: COLORS.primaryLight,
