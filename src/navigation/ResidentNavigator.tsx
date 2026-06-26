@@ -2,6 +2,7 @@
 // Bottom tabs: Home, Usage, Complaints, Profile
 
 import React from 'react';
+import { Platform, StatusBar } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
@@ -14,13 +15,15 @@ import ComplaintsScreen from '../features/resident/complaints/ComplaintsScreen';
 import RaiseComplaintScreen from '../features/resident/complaints/RaiseComplaintScreen';
 import ProfileScreen from '../features/resident/profile/ProfileScreen';
 
+const STATUSBAR_HEIGHT = Platform.OS === 'android' ? (StatusBar.currentHeight ?? 32) : 0;
+
 const HomeStack = createNativeStackNavigator();
 const UsageStack = createNativeStackNavigator();
 const ComplaintsStack = createNativeStackNavigator();
 const ProfileStack = createNativeStackNavigator();
 
 const HomeStackScreen: React.FC = () => (
-  <HomeStack.Navigator screenOptions={{ headerShown: false }}>
+  <HomeStack.Navigator screenOptions={{ headerShown: false, contentStyle: { paddingTop: STATUSBAR_HEIGHT } }}>
     <HomeStack.Screen name="HomeMain" component={HomeScreen} />
     <HomeStack.Screen name="Usage" component={UsageScreen} />
     <HomeStack.Screen name="RaiseComplaint" component={RaiseComplaintScreen} />
@@ -29,20 +32,20 @@ const HomeStackScreen: React.FC = () => (
 );
 
 const UsageStackScreen: React.FC = () => (
-  <UsageStack.Navigator screenOptions={{ headerShown: false }}>
+  <UsageStack.Navigator screenOptions={{ headerShown: false, contentStyle: { paddingTop: STATUSBAR_HEIGHT } }}>
     <UsageStack.Screen name="UsageHome" component={UsageScreen} />
   </UsageStack.Navigator>
 );
 
 const ComplaintsStackScreen: React.FC = () => (
-  <ComplaintsStack.Navigator screenOptions={{ headerShown: false }}>
+  <ComplaintsStack.Navigator screenOptions={{ headerShown: false, contentStyle: { paddingTop: STATUSBAR_HEIGHT } }}>
     <ComplaintsStack.Screen name="ComplaintsHome" component={ComplaintsScreen} />
     <ComplaintsStack.Screen name="RaiseComplaint" component={RaiseComplaintScreen} />
   </ComplaintsStack.Navigator>
 );
 
 const ProfileStackScreen: React.FC = () => (
-  <ProfileStack.Navigator screenOptions={{ headerShown: false }}>
+  <ProfileStack.Navigator screenOptions={{ headerShown: false, contentStyle: { paddingTop: STATUSBAR_HEIGHT } }}>
     <ProfileStack.Screen name="ProfileHome" component={ProfileScreen} />
   </ProfileStack.Navigator>
 );

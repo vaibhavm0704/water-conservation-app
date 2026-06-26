@@ -3,6 +3,7 @@
 // Each tab has a nested stack for sub-screens
 
 import React from 'react';
+import { Platform, StatusBar } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Ionicons } from '@expo/vector-icons';
@@ -17,6 +18,8 @@ import PropertiesScreen from '../features/estate-admin/properties/PropertiesScre
 import ReportsScreen from '../features/estate-admin/reports/ReportsScreen';
 import ProfileScreen from '../features/estate-admin/profile/ProfileScreen';
 
+const STATUSBAR_HEIGHT = Platform.OS === 'android' ? (StatusBar.currentHeight ?? 32) : 0;
+
 const DashboardStack = createNativeStackNavigator();
 const ResidentsStack = createNativeStackNavigator();
 const PropertiesStack = createNativeStackNavigator();
@@ -24,7 +27,7 @@ const ReportsStack = createNativeStackNavigator();
 const ProfileStack = createNativeStackNavigator();
 
 const DashboardStackScreen: React.FC = () => (
-  <DashboardStack.Navigator screenOptions={{ headerShown: false }}>
+  <DashboardStack.Navigator screenOptions={{ headerShown: false, contentStyle: { paddingTop: STATUSBAR_HEIGHT } }}>
     <DashboardStack.Screen name="DashboardHome" component={DashboardScreen} />
     <DashboardStack.Screen name="AddResident" component={AddResidentScreen} />
     <DashboardStack.Screen name="ResidentDetail" component={ResidentDetailScreen} />
@@ -33,7 +36,7 @@ const DashboardStackScreen: React.FC = () => (
 );
 
 const ResidentsStackScreen: React.FC = () => (
-  <ResidentsStack.Navigator screenOptions={{ headerShown: false }}>
+  <ResidentsStack.Navigator screenOptions={{ headerShown: false, contentStyle: { paddingTop: STATUSBAR_HEIGHT } }}>
     <ResidentsStack.Screen name="ResidentsHome" component={ResidentsScreen} />
     <ResidentsStack.Screen name="AddResident" component={AddResidentScreen} />
     <ResidentsStack.Screen name="ResidentDetail" component={ResidentDetailScreen} />
@@ -41,19 +44,19 @@ const ResidentsStackScreen: React.FC = () => (
 );
 
 const PropertiesStackScreen: React.FC = () => (
-  <PropertiesStack.Navigator screenOptions={{ headerShown: false }}>
+  <PropertiesStack.Navigator screenOptions={{ headerShown: false, contentStyle: { paddingTop: STATUSBAR_HEIGHT } }}>
     <PropertiesStack.Screen name="PropertiesHome" component={PropertiesScreen} />
   </PropertiesStack.Navigator>
 );
 
 const ReportsStackScreen: React.FC = () => (
-  <ReportsStack.Navigator screenOptions={{ headerShown: false }}>
+  <ReportsStack.Navigator screenOptions={{ headerShown: false, contentStyle: { paddingTop: STATUSBAR_HEIGHT } }}>
     <ReportsStack.Screen name="ReportsHome" component={ReportsScreen} />
   </ReportsStack.Navigator>
 );
 
 const ProfileStackScreen: React.FC = () => (
-  <ProfileStack.Navigator screenOptions={{ headerShown: false }}>
+  <ProfileStack.Navigator screenOptions={{ headerShown: false, contentStyle: { paddingTop: STATUSBAR_HEIGHT } }}>
     <ProfileStack.Screen name="ProfileHome" component={ProfileScreen} />
   </ProfileStack.Navigator>
 );

@@ -10,6 +10,7 @@ import {
   Alert,
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
+import { useAuth } from '../../../context/AuthContext';
 import {
   COLORS,
   SPACING,
@@ -18,8 +19,6 @@ import {
   FONT_FAMILY,
   FONT_SIZE,
 } from '../../../shared/constants/theme';
-import { useAuth } from '../../../context/AuthContext';
-import { useNotifications } from '../../../context/NotificationContext';
 
 // ── Info Row ───────────────────────────────────────────────────────────
 
@@ -51,13 +50,16 @@ const ToggleRow: React.FC<{
 // ── Main Component ─────────────────────────────────────────────────────
 
 const ProfileScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
-  const { user, logout } = useAuth();
-  const { pushEnabled, emailEnabled, togglePush, toggleEmail } = useNotifications();
+  const { logout } = useAuth();
+
+  // Notification preferences
+  const [pushEnabled, setPushEnabled] = useState(true);
+  const [emailEnabled, setEmailEnabled] = useState(true);
 
   // Complaint category toggles
   const [categories, setCategories] = useState([
     { label: 'Water Leakage', enabled: true },
-    { label: 'Water Quality', enabled: true },
+    { label: 'No Water Supply', enabled: true },
     { label: 'Billing Issues', enabled: true },
     { label: 'Low Pressure', enabled: false },
     { label: 'Maintenance', enabled: true },
@@ -76,11 +78,7 @@ const ProfileScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
         text: 'Logout',
         style: 'destructive',
         onPress: async () => {
-          try {
-            await logout();
-          } catch (error) {
-            Alert.alert('Error', 'Failed to logout. Please try again.');
-          }
+          await logout();
         },
       },
     ]);
@@ -97,7 +95,7 @@ const ProfileScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
         <View style={styles.avatar}>
           <Ionicons name="person" size={36} color={COLORS.primary} />
         </View>
-        <Text style={styles.profileName}>{user?.name || 'Admin User'}</Text>
+        <Text style={styles.profileName}>Admin User</Text>
         <View style={styles.roleBadge}>
           <MaterialCommunityIcons name="shield-crown" size={14} color={COLORS.primary} />
           <Text style={styles.roleText}>Estate Administrator</Text>
@@ -153,12 +151,12 @@ const ProfileScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
         <ToggleRow
           label="Push Notifications"
           value={pushEnabled}
-          onToggle={togglePush}
+          onToggle={setPushEnabled}
         />
         <ToggleRow
           label="Email Notifications"
           value={emailEnabled}
-          onToggle={toggleEmail}
+          onToggle={setEmailEnabled}
         />
       </View>
 

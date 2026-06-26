@@ -16,8 +16,8 @@ import ResidentNavigator from './ResidentNavigator';
 const AppNavigator: React.FC = () => {
   const { isAuthenticated, role, isLoading } = useAuth();
 
-  // Show loader while auth state is being restored
-  if (isLoading && !isAuthenticated) {
+  // Show loader only during initial session restore (not during logout)
+  if (isLoading && !isAuthenticated && role === null) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color={COLORS.primary} />
