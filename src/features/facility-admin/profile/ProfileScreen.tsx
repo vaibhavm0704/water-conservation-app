@@ -110,7 +110,7 @@ const ProfileScreen: React.FC<ProfileScreenProps> = ({ navigation }) => {
         <View style={styles.detailRow}>
           <Ionicons name="card-outline" size={16} color={COLORS.textTertiary} />
           <Text style={styles.detailLabel}>Employee ID</Text>
-          <Text style={styles.detailValue}>{user?.employeeId || 'N/A'}</Text>
+          <Text style={styles.detailValue}>{user?.id || 'N/A'}</Text>
         </View>
       </View>
 

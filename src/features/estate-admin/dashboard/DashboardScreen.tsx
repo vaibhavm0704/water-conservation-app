@@ -204,7 +204,7 @@ const DashboardScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
               backgroundColor: COLORS.card,
               backgroundGradientFrom: COLORS.card,
               backgroundGradientTo: COLORS.card,
-              decimalCount: 0,
+              decimalPlaces: 0,
               color: (opacity = 1) => `rgba(37, 99, 235, ${opacity})`,
               labelColor: () => COLORS.textSecondary,
               propsForDots: {

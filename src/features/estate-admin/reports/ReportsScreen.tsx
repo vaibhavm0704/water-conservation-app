@@ -165,7 +165,7 @@ const ReportsScreen: React.FC = () => {
               backgroundColor: COLORS.card,
               backgroundGradientFrom: COLORS.card,
               backgroundGradientTo: COLORS.card,
-              decimalCount: 0,
+              decimalPlaces: 0,
               color: (opacity = 1) => `rgba(37, 99, 235, ${opacity})`,
               labelColor: () => COLORS.textSecondary,
               propsForDots: {
@@ -205,7 +205,7 @@ const ReportsScreen: React.FC = () => {
               backgroundColor: COLORS.card,
               backgroundGradientFrom: COLORS.card,
               backgroundGradientTo: COLORS.card,
-              decimalCount: 0,
+              decimalPlaces: 0,
               color: (opacity = 1) => `rgba(14, 165, 233, ${opacity})`,
               labelColor: () => COLORS.textSecondary,
               barPercentage: 0.6,
