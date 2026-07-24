@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   View,
   Text,
@@ -22,6 +23,7 @@ import ChartCard from '../../../shared/components/ChartCard';
 import LoadingState from '../../../shared/components/LoadingState';
 import { getDashboardStats, getComplaintDistribution } from '../services/facilityService';
 import { FacilityDashboardStats, ComplaintDistribution } from '../types/facilityTypes';
+import { useAuth } from '../../../context/AuthContext';
 
 interface DashboardScreenProps {
   navigation?: any;
@@ -40,6 +42,7 @@ const DashboardScreen: React.FC<DashboardScreenProps> = ({ navigation }) => {
   const [distribution, setDistribution] = useState<ComplaintDistribution[]>([]);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const { user } = useAuth();
 
   const loadData = useCallback(async () => {
     try {
@@ -57,9 +60,11 @@ const DashboardScreen: React.FC<DashboardScreenProps> = ({ navigation }) => {
     }
   }, []);
 
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
+  useFocusEffect(
+    useCallback(() => {
+      loadData();
+    }, [loadData])
+  );
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
@@ -83,7 +88,7 @@ const DashboardScreen: React.FC<DashboardScreenProps> = ({ navigation }) => {
       icon: 'megaphone-outline' as keyof typeof Ionicons.glyphMap,
       color: COLORS.ocean,
       bg: COLORS.aquaMist,
-      onPress: () => navigation?.navigate?.('CreateNotice'),
+      onPress: () => navigation?.navigate?.('PublishNotice'),
     },
     {
       label: 'Assign Staff',
@@ -118,8 +123,8 @@ const DashboardScreen: React.FC<DashboardScreenProps> = ({ navigation }) => {
       {/* Header */}
       <View style={styles.header}>
         <View>
-          <Text style={styles.headerTitle}>Facility Overview</Text>
-          <Text style={styles.headerSubtitle}>GreenVille Estate</Text>
+          <Text style={styles.headerTitle}>Hello, {user?.name || 'Admin'}</Text>
+          <Text style={styles.headerSubtitle}>{user?.estateName || 'GreenVille Estate'}</Text>
         </View>
         <View style={styles.headerBadge}>
           <Ionicons name="shield-checkmark" size={16} color={COLORS.primary} />

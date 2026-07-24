@@ -9,9 +9,12 @@ import {
   TouchableOpacity,
   Dimensions,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { LineChart } from 'react-native-chart-kit';
+import { useAuth } from '../../../context/AuthContext';
 import {
   COLORS,
   SPACING,
@@ -70,6 +73,7 @@ const timeAgo = (timestamp: string): string => {
 // ── Component ──────────────────────────────────────────────────────────
 
 const DashboardScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
+  const { user } = useAuth();
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [weeklyData, setWeeklyData] = useState<WeeklyUsageData | null>(null);
@@ -93,9 +97,11 @@ const DashboardScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
     }
   }, []);
 
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
+  useFocusEffect(
+    useCallback(() => {
+      loadData();
+    }, [loadData])
+  );
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -146,7 +152,7 @@ const DashboardScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
   // ── Quick actions ──
   const quickActions = [
     { label: 'Add Resident', icon: 'person-add', color: COLORS.primary, onPress: () => navigation?.navigate?.('AddResident') },
-    { label: 'Create Notice', icon: 'megaphone', color: COLORS.ocean, onPress: () => {} },
+    { label: 'Create Notice', icon: 'megaphone', color: COLORS.ocean, onPress: () => Alert.alert('Notice', 'Use Facility Admin module to create notices') },
     { label: 'Generate Report', icon: 'document-text', color: COLORS.cyan, onPress: () => navigation?.navigate?.('Reports') },
     { label: 'View Analytics', icon: 'analytics', color: COLORS.mint, onPress: () => navigation?.navigate?.('Reports') },
   ];
@@ -167,8 +173,8 @@ const DashboardScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
     >
       {/* ── Header ── */}
       <View style={styles.header}>
-        <Text style={styles.greeting}>Good Morning, Admin 👋</Text>
-        <Text style={styles.estateName}>GreenVille Estate</Text>
+        <Text style={styles.greeting}>Hello, {user?.name ?? 'Admin'} 👋</Text>
+        <Text style={styles.estateName}>{user?.estateName ?? 'Estate'}</Text>
       </View>
 
       {/* ── Stat Cards 2×2 ── */}

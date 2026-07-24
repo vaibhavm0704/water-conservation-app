@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Modal,
   FlatList,
+  Image,
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import {
@@ -28,13 +29,8 @@ import {
   resolveComplaint,
   getStaff,
 } from '../services/facilityService';
-import {
-  Complaint,
-  Staff,
-  ComplaintCategory,
-  ComplaintPriority,
-  ComplaintStatus,
-} from '../types/facilityTypes';
+import { Staff } from '../types/facilityTypes';
+import { SharedComplaint, ComplaintStatus, ComplaintPriority, ComplaintCategory, ISSUE_TYPE_FULL_LABELS } from '../../../shared/data/sharedStore';
 
 interface ComplaintDetailScreenProps {
   route?: { params?: { complaintId?: string } };
@@ -64,13 +60,7 @@ const ISSUE_ICONS: Record<ComplaintCategory, { icon: keyof typeof MaterialCommun
   other: { icon: 'help-circle-outline', color: COLORS.textTertiary },
 };
 
-const ISSUE_LABELS: Record<ComplaintCategory, string> = {
-  leakage: 'Water Leakage',
-  no_water: 'No Water Supply',
-  low_pressure: 'Low Pressure',
-  dirty_water: 'Dirty Water',
-  other: 'Other Issue',
-};
+const ISSUE_LABELS = ISSUE_TYPE_FULL_LABELS;
 
 const ComplaintDetailScreen: React.FC<ComplaintDetailScreenProps> = ({
   route,
@@ -78,7 +68,7 @@ const ComplaintDetailScreen: React.FC<ComplaintDetailScreenProps> = ({
 }) => {
   const complaintId = route?.params?.complaintId ?? 'c-001';
 
-  const [complaint, setComplaint] = useState<Complaint | null>(null);
+  const [complaint, setComplaint] = useState<SharedComplaint | null>(null);
   const [staff, setStaff] = useState<Staff[]>([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
@@ -244,7 +234,11 @@ const ComplaintDetailScreen: React.FC<ComplaintDetailScreenProps> = ({
           <Text style={styles.cardTitle}>Attached Image</Text>
           {complaint.imageUri ? (
             <View style={styles.imageContainer}>
-              <Text style={styles.imagePlaceholderText}>Image: {complaint.imageUri}</Text>
+              <Image 
+                source={{ uri: complaint.imageUri }} 
+                style={{ width: '100%', height: 200, borderRadius: 12 }} 
+                resizeMode="cover" 
+              />
             </View>
           ) : (
             <View style={styles.noImageContainer}>

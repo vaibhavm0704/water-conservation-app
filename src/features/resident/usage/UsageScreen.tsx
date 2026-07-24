@@ -324,7 +324,7 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
   scroll: { flex: 1 },
   scrollContent: {
-    paddingTop: Platform.OS === 'ios' ? 60 : StatusBar.currentHeight ? StatusBar.currentHeight + 16 : 48,
+    paddingTop: SPACING.xl,
     paddingBottom: SPACING.massive,
   },
 

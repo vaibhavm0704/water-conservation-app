@@ -3,24 +3,14 @@
 // ============================================================
 
 import {
-  ResidentDashboard,
   DailyUsage,
   MonthlyUsage,
   Bill,
-  Complaint,
   ConservationTip,
   UsageStatistics,
 } from '../types/residentTypes';
 
-// ── Dashboard ────────────────────────────────────────────────
-export const mockDashboard: ResidentDashboard = {
-  todayUsage: 85,
-  monthlyUsage: 2450,
-  currentBill: 1230,
-  openComplaints: 2,
-  waterSaved: 1850,
-  conservationScore: 91,
-};
+// Dashboard stats are now computed dynamically in sharedStore
 
 // ── Hourly usage for each day of the week ────────────────────
 const generateHourlyUsage = (seed: number): DailyUsage[] => {
@@ -101,41 +91,7 @@ export const mockBills: Bill[] = [
   },
 ];
 
-// ── Complaints ───────────────────────────────────────────────
-export const mockComplaints: Complaint[] = [
-  {
-    id: 'cmp-001',
-    ticketId: 'TKT-2026-0041',
-    issueType: 'Leakage',
-    description: 'Water leaking from the kitchen tap even after shutting it completely.',
-    date: '2026-06-24',
-    status: 'open',
-  },
-  {
-    id: 'cmp-002',
-    ticketId: 'TKT-2026-0039',
-    issueType: 'Low Pressure',
-    description: 'Very low water pressure in the bathroom shower during morning hours.',
-    date: '2026-06-20',
-    status: 'in-progress',
-  },
-  {
-    id: 'cmp-003',
-    ticketId: 'TKT-2026-0032',
-    issueType: 'No Water',
-    description: 'No water supply on the 4th floor between 9 AM and 12 PM.',
-    date: '2026-06-15',
-    status: 'resolved',
-  },
-  {
-    id: 'cmp-004',
-    ticketId: 'TKT-2026-0028',
-    issueType: 'Dirty Water',
-    description: 'Brownish water coming from taps after maintenance work yesterday.',
-    date: '2026-06-10',
-    status: 'closed',
-  },
-];
+// Complaints are now in sharedStore.ts (centralized)
 
 // ── Conservation Tips ────────────────────────────────────────
 export const mockConservationTips: ConservationTip[] = [

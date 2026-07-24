@@ -18,6 +18,7 @@ import {
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useAuth } from '../../../context/AuthContext';
 import {
   COLORS,
   SPACING,
@@ -27,7 +28,8 @@ import {
   FONT_SIZE,
 } from '../../../shared/constants/theme';
 import { ResidentDashboard, ConservationTip } from '../types/residentTypes';
-import { getDashboard, getConservationTips } from '../services/residentService';
+import { getDashboard, getConservationTips, getNotices } from '../services/residentService';
+import NoticeCard from '../../../shared/components/NoticeCard';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CARD_GAP = SPACING.md;
@@ -144,8 +146,10 @@ const ScoreRing: React.FC<{ score: number }> = ({ score }) => {
 // ── Main Screen ──────────────────────────────────────────────
 const HomeScreen: React.FC = () => {
   const navigation = useNavigation<any>();
+  const { user } = useAuth();
   const [dashboard, setDashboard] = useState<ResidentDashboard | null>(null);
   const [tips, setTips] = useState<ConservationTip[]>([]);
+  const [notices, setNotices] = useState<any[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
   // Fade-in animation
@@ -153,10 +157,12 @@ const HomeScreen: React.FC = () => {
   const slideAnim = useRef(new Animated.Value(30)).current;
 
   const loadData = useCallback(async () => {
-    const [d, t] = await Promise.all([getDashboard(), getConservationTips()]);
+    if (!user) return;
+    const [d, t, n] = await Promise.all([getDashboard(user.id), getConservationTips(), getNotices()]);
     setDashboard(d);
     setTips(t);
-  }, []);
+    setNotices(n.slice(0, 3));
+  }, [user]);
 
   useEffect(() => {
     loadData().then(() => {
@@ -220,15 +226,17 @@ const HomeScreen: React.FC = () => {
           {/* ── Header ─────────────────────────────────────── */}
           <View style={styles.header}>
             <View>
-              <Text style={styles.greeting}>Hello, Rahul 👋</Text>
-              <Text style={styles.subtitle}>Flat A-101 • GreenVille Estate</Text>
+              <Text style={styles.greeting}>Hello, {user?.name.split(' ')[0]} 👋</Text>
+              <Text style={styles.subtitle}>Flat {user?.flatNumber} • {user?.estateName}</Text>
             </View>
             <TouchableOpacity
               style={styles.avatarCircle}
               activeOpacity={0.7}
               onPress={() => navigation.navigate('Profile')}
             >
-              <Text style={styles.avatarText}>RS</Text>
+              <Text style={styles.avatarText}>
+                {user?.name.split(' ').map((n) => n[0]).join('').substring(0, 2).toUpperCase()}
+              </Text>
             </TouchableOpacity>
           </View>
 
@@ -294,6 +302,26 @@ const HomeScreen: React.FC = () => {
           <Text style={styles.sectionTitle}>💡 Conservation Tips</Text>
           <TipCarousel tips={tips} />
 
+          {/* ── Community Notices ─────────────────────────── */}
+          {notices.length > 0 && (
+            <>
+              <Text style={styles.sectionTitle}>Community Notices</Text>
+              <View style={{ paddingHorizontal: SPACING.xl, gap: SPACING.md }}>
+                {notices.map((notice) => (
+                  <NoticeCard
+                    key={notice.id}
+                    title={notice.title}
+                    description={notice.description}
+                    type={notice.type}
+                    startTime={new Date(notice.startTime).toLocaleDateString()}
+                    endTime={new Date(notice.endTime).toLocaleDateString()}
+                    createdBy={notice.createdBy}
+                  />
+                ))}
+              </View>
+            </>
+          )}
+
           {/* ── Quick Actions ─────────────────────────────── */}
           <Text style={styles.sectionTitle}>Quick Actions</Text>
           <View style={styles.actionsRow}>
@@ -350,7 +378,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
   },
   scroll: { flex: 1 },
-  scrollContent: { paddingTop: Platform.OS === 'ios' ? 60 : StatusBar.currentHeight ? StatusBar.currentHeight + 16 : 48 },
+  scrollContent: { paddingTop: SPACING.xl },
 
   // Loading
   loadingWrap: {

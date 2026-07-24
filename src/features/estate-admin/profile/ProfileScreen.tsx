@@ -50,7 +50,7 @@ const ToggleRow: React.FC<{
 // ── Main Component ─────────────────────────────────────────────────────
 
 const ProfileScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
 
   // Notification preferences
   const [pushEnabled, setPushEnabled] = useState(true);
@@ -95,7 +95,7 @@ const ProfileScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
         <View style={styles.avatar}>
           <Ionicons name="person" size={36} color={COLORS.primary} />
         </View>
-        <Text style={styles.profileName}>Admin User</Text>
+        <Text style={styles.profileName}>{user?.name ?? 'Admin User'}</Text>
         <View style={styles.roleBadge}>
           <MaterialCommunityIcons name="shield-crown" size={14} color={COLORS.primary} />
           <Text style={styles.roleText}>Estate Administrator</Text>
@@ -108,7 +108,7 @@ const ProfileScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
           <Ionicons name="business" size={20} color={COLORS.primary} />
           <Text style={styles.cardTitle}>Estate Information</Text>
         </View>
-        <InfoRow label="Estate Name" value="GreenVille Estate" />
+        <InfoRow label="Estate Name" value={user?.estateName ?? 'GreenVille Estate'} />
         <InfoRow label="Address" value="Sector 42, Whitefield, Bengaluru" />
         <InfoRow label="Total Blocks" value="4 Blocks" />
         <InfoRow label="Established" value="January 2020" />

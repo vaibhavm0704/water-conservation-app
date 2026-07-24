@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
 import {
   View,
   Text,
@@ -21,7 +22,7 @@ import ComplaintCard from '../../../shared/components/ComplaintCard';
 import LoadingState from '../../../shared/components/LoadingState';
 import EmptyState from '../../../shared/components/EmptyState';
 import { getComplaints } from '../services/facilityService';
-import { Complaint, ComplaintStatus, ComplaintCategory } from '../types/facilityTypes';
+import { SharedComplaint, ComplaintStatus } from '../../../shared/data/sharedStore';
 
 interface ComplaintsScreenProps {
   navigation?: any;
@@ -36,7 +37,7 @@ const FILTER_TABS: { key: FilterTab; label: string }[] = [
   { key: 'resolved', label: 'Resolved' },
 ];
 
-const ISSUE_TYPE_LABELS: Record<ComplaintCategory, string> = {
+const ISSUE_TYPE_LABELS: Record<string, string> = {
   leakage: 'Water Leakage',
   no_water: 'No Water Supply',
   low_pressure: 'Low Pressure',
@@ -45,7 +46,7 @@ const ISSUE_TYPE_LABELS: Record<ComplaintCategory, string> = {
 };
 
 const ComplaintsScreen: React.FC<ComplaintsScreenProps> = ({ navigation }) => {
-  const [complaints, setComplaints] = useState<Complaint[]>([]);
+  const [complaints, setComplaints] = useState<SharedComplaint[]>([]);
   const [activeFilter, setActiveFilter] = useState<FilterTab>('all');
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
@@ -63,21 +64,23 @@ const ComplaintsScreen: React.FC<ComplaintsScreenProps> = ({ navigation }) => {
     }
   }, [activeFilter]);
 
-  useEffect(() => {
-    setLoading(true);
-    loadComplaints();
-  }, [loadComplaints]);
+  useFocusEffect(
+    useCallback(() => {
+      setLoading(true);
+      loadComplaints();
+    }, [loadComplaints])
+  );
 
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     loadComplaints();
   }, [loadComplaints]);
 
-  const handleComplaintPress = (complaint: Complaint) => {
+  const handleComplaintPress = (complaint: SharedComplaint) => {
     navigation?.navigate?.('ComplaintDetail', { complaintId: complaint.id });
   };
 
-  const renderComplaint = ({ item }: { item: Complaint }) => (
+  const renderComplaint = ({ item }: { item: SharedComplaint }) => (
     <View style={styles.cardWrapper}>
       <ComplaintCard
         ticketId={item.ticketId}

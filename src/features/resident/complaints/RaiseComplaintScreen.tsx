@@ -21,6 +21,7 @@ import {
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
+import { useAuth } from '../../../context/AuthContext';
 import {
   COLORS,
   SPACING,
@@ -29,20 +30,21 @@ import {
   FONT_FAMILY,
   FONT_SIZE,
 } from '../../../shared/constants/theme';
-import { IssueType } from '../types/residentTypes';
 import { raiseComplaint } from '../services/residentService';
+import { ComplaintCategory, ISSUE_TYPE_LABELS } from '../../../shared/data/sharedStore';
 
-const ISSUE_TYPES: { type: IssueType; icon: string; lib: 'ion' | 'mci' }[] = [
-  { type: 'Leakage', icon: 'water-outline', lib: 'ion' },
-  { type: 'No Water', icon: 'water-off', lib: 'mci' },
-  { type: 'Low Pressure', icon: 'speedometer-outline', lib: 'ion' },
-  { type: 'Dirty Water', icon: 'flask-outline', lib: 'ion' },
-  { type: 'Others', icon: 'help-circle-outline', lib: 'ion' },
+const ISSUE_TYPES: { type: ComplaintCategory; icon: string; lib: 'ion' | 'mci' }[] = [
+  { type: 'leakage', icon: 'water-outline', lib: 'ion' },
+  { type: 'no_water', icon: 'water-off', lib: 'mci' },
+  { type: 'low_pressure', icon: 'speedometer-outline', lib: 'ion' },
+  { type: 'dirty_water', icon: 'flask-outline', lib: 'ion' },
+  { type: 'other', icon: 'help-circle-outline', lib: 'ion' },
 ];
 
 const RaiseComplaintScreen: React.FC = () => {
   const navigation = useNavigation<any>();
-  const [selectedType, setSelectedType] = useState<IssueType | null>(null);
+  const { user } = useAuth();
+  const [selectedType, setSelectedType] = useState<ComplaintCategory | null>(null);
   const [description, setDescription] = useState('');
   const [imageUri, setImageUri] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -74,10 +76,14 @@ const RaiseComplaintScreen: React.FC = () => {
 
     setSubmitting(true);
     try {
+      if (!user) throw new Error("No user");
       await raiseComplaint({
         issueType: selectedType,
         description: description.trim(),
         imageUri: imageUri ?? undefined,
+        residentId: user.id,
+        residentName: user.name,
+        flatNumber: user.flatNumber,
       });
       Alert.alert(
         'Complaint Raised ✓',
@@ -147,7 +153,7 @@ const RaiseComplaintScreen: React.FC = () => {
                         selected && styles.chipTextActive,
                       ]}
                     >
-                      {it.type}
+                      {ISSUE_TYPE_LABELS[it.type]}
                     </Text>
                   </TouchableOpacity>
                 );
@@ -220,7 +226,7 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
   scroll: { flex: 1 },
   scrollContent: {
-    paddingTop: Platform.OS === 'ios' ? 60 : StatusBar.currentHeight ? StatusBar.currentHeight + 16 : 48,
+    paddingTop: SPACING.xl,
     paddingHorizontal: SPACING.xl,
     paddingBottom: SPACING.massive,
   },

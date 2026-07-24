@@ -10,6 +10,7 @@ import {
   RefreshControl,
   ActivityIndicator,
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 import {
   COLORS,
@@ -96,9 +97,11 @@ const ResidentsScreen: React.FC<{ navigation?: any }> = ({ navigation }) => {
     }
   }, []);
 
-  useEffect(() => {
-    loadResidents();
-  }, [loadResidents]);
+  useFocusEffect(
+    useCallback(() => {
+      loadResidents();
+    }, [loadResidents])
+  );
 
   useEffect(() => {
     const timer = setTimeout(async () => {

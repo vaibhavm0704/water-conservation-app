@@ -23,6 +23,7 @@ import AppButton from '../../../shared/components/AppButton';
 import AppInput from '../../../shared/components/AppInput';
 import { createNotice } from '../services/facilityService';
 import { NoticeType } from '../types/facilityTypes';
+import { useAuth } from '../../../context/AuthContext';
 
 interface CreateNoticeScreenProps {
   navigation?: any;
@@ -72,6 +73,7 @@ const CreateNoticeScreen: React.FC<CreateNoticeScreenProps> = ({ navigation }) =
   const [endTime, setEndTime] = useState('');
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const { user } = useAuth();
 
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
@@ -95,6 +97,7 @@ const CreateNoticeScreen: React.FC<CreateNoticeScreenProps> = ({ navigation }) =
         type: selectedType!,
         startTime: startTime.trim(),
         endTime: endTime.trim(),
+        createdBy: user?.name ?? 'Admin',
       });
       Alert.alert(
         'Notice Published! ✅',

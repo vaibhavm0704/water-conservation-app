@@ -14,7 +14,8 @@ import {
   View,
 } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useFocusEffect } from '@react-navigation/native';
+import { useAuth } from '../../../context/AuthContext';
 import {
   COLORS,
   SPACING,
@@ -23,7 +24,7 @@ import {
   FONT_FAMILY,
   FONT_SIZE,
 } from '../../../shared/constants/theme';
-import { Complaint, ComplaintStatus } from '../types/residentTypes';
+import { SharedComplaint, ComplaintStatus, ISSUE_TYPE_LABELS } from '../../../shared/data/sharedStore';
 import { getComplaints } from '../services/residentService';
 
 // ── Status Badge ─────────────────────────────────────────────
@@ -31,13 +32,13 @@ const STATUS_CONFIG: Record<
   ComplaintStatus,
   { bg: string; text: string; label: string; icon: string }
 > = {
-  open: {
+  pending: {
     bg: COLORS.warningLight,
     text: COLORS.warning,
-    label: 'Open',
+    label: 'Pending',
     icon: 'alert-circle',
   },
-  'in-progress': {
+  in_progress: {
     bg: COLORS.infoLight,
     text: COLORS.info,
     label: 'In Progress',
@@ -49,24 +50,18 @@ const STATUS_CONFIG: Record<
     label: 'Resolved',
     icon: 'checkmark-circle',
   },
-  closed: {
-    bg: COLORS.surface,
-    text: COLORS.textTertiary,
-    label: 'Closed',
-    icon: 'close-circle',
-  },
 };
 
 const ISSUE_ICONS: Record<string, string> = {
-  Leakage: 'water-outline',
-  'No Water': 'water-off',
-  'Low Pressure': 'speedometer-outline',
-  'Dirty Water': 'flask-outline',
-  Others: 'help-circle-outline',
+  leakage: 'water-outline',
+  no_water: 'water-off',
+  low_pressure: 'speedometer-outline',
+  dirty_water: 'flask-outline',
+  other: 'help-circle-outline',
 };
 
 // ── Complaint Card ───────────────────────────────────────────
-const ComplaintItem: React.FC<{ item: Complaint; index: number }> = ({
+const ComplaintItem: React.FC<{ item: SharedComplaint; index: number }> = ({
   item,
   index,
 }) => {
@@ -95,7 +90,7 @@ const ComplaintItem: React.FC<{ item: Complaint; index: number }> = ({
     ISSUE_ICONS[item.issueType] || 'help-circle-outline';
 
   // For 'No Water' we need MaterialCommunityIcons
-  const isNoWater = item.issueType === 'No Water';
+  const isNoWater = item.issueType === 'no_water';
 
   return (
     <Animated.View
@@ -130,7 +125,7 @@ const ComplaintItem: React.FC<{ item: Complaint; index: number }> = ({
             </View>
           </View>
 
-          <Text style={styles.issueType}>{item.issueType}</Text>
+          <Text style={styles.issueType}>{ISSUE_TYPE_LABELS[item.issueType]}</Text>
           <Text style={styles.description} numberOfLines={2}>
             {item.description}
           </Text>
@@ -152,27 +147,25 @@ const ComplaintItem: React.FC<{ item: Complaint; index: number }> = ({
 // ── Main Screen ──────────────────────────────────────────────
 const ComplaintsScreen: React.FC = () => {
   const navigation = useNavigation<any>();
-  const [complaints, setComplaints] = useState<Complaint[]>([]);
+  const { user } = useAuth();
+  const [complaints, setComplaints] = useState<SharedComplaint[]>([]);
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
+    if (!user) return;
     setLoading(true);
-    const data = await getComplaints();
+    const data = await getComplaints(user.id);
     setComplaints(data);
     setLoading(false);
-  }, []);
+  }, [user]);
 
-  useEffect(() => {
-    load();
-  }, []);
-
-  // Re-load when navigating back from raise-complaint
-  useEffect(() => {
-    const unsub = navigation.addListener('focus', () => {
+  useFocusEffect(
+    useCallback(() => {
       load();
-    });
-    return unsub;
-  }, [navigation, load]);
+    }, [load])
+  );
+
+
 
   return (
     <View style={styles.root}>
@@ -182,7 +175,7 @@ const ComplaintsScreen: React.FC = () => {
       <View style={styles.header}>
         <Text style={styles.title}>Complaints</Text>
         <Text style={styles.headerSub}>
-          {complaints.length} total • {complaints.filter((c) => c.status === 'open').length} open
+          {complaints.length} total • {complaints.filter((c) => c.status === 'pending').length} pending
         </Text>
       </View>
 
@@ -230,7 +223,7 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
 
   header: {
-    paddingTop: Platform.OS === 'ios' ? 60 : StatusBar.currentHeight ? StatusBar.currentHeight + 16 : 48,
+    paddingTop: SPACING.xl,
     paddingHorizontal: SPACING.xl,
     paddingBottom: SPACING.md,
     backgroundColor: COLORS.background,

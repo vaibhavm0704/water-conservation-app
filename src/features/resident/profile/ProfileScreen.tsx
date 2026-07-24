@@ -44,7 +44,7 @@ const statusColor = (s: Bill['status']) => {
 
 // ── Profile Screen ───────────────────────────────────────────
 const ProfileScreen: React.FC = () => {
-  const { logout } = useAuth();
+  const { user, logout } = useAuth();
   const [bills, setBills] = useState<Bill[]>([]);
   const [pushEnabled, setPushEnabled] = useState(true);
   const [emailEnabled, setEmailEnabled] = useState(false);
@@ -102,9 +102,11 @@ const ProfileScreen: React.FC = () => {
           {/* ── Profile Header ──────────────────────────────── */}
           <View style={styles.profileHeader}>
             <View style={styles.avatarLarge}>
-              <Text style={styles.avatarInitials}>RS</Text>
+              <Text style={styles.avatarInitials}>
+                {user?.name.split(' ').map((n) => n[0]).join('').substring(0, 2).toUpperCase()}
+              </Text>
             </View>
-            <Text style={styles.profileName}>Rahul Sharma</Text>
+            <Text style={styles.profileName}>{user?.name}</Text>
             <View style={styles.badgeRow}>
               <View style={styles.roleBadge}>
                 <Ionicons name="person" size={12} color={COLORS.primary} />
@@ -112,7 +114,7 @@ const ProfileScreen: React.FC = () => {
               </View>
               <View style={styles.flatBadge}>
                 <Ionicons name="home" size={12} color={COLORS.ocean} />
-                <Text style={styles.flatBadgeText}>A-101</Text>
+                <Text style={styles.flatBadgeText}>{user?.flatNumber}</Text>
               </View>
             </View>
           </View>
@@ -123,22 +125,22 @@ const ProfileScreen: React.FC = () => {
             <DetailRow
               icon="person-outline"
               label="Name"
-              value="Rahul Sharma"
+              value={user?.name || ''}
             />
             <DetailRow
               icon="call-outline"
               label="Phone"
-              value="+91 98765 43210"
+              value={user?.phone || ''}
             />
             <DetailRow
               icon="mail-outline"
               label="Email"
-              value="rahul.sharma@email.com"
+              value={user?.email || ''}
             />
             <DetailRow
               icon="home-outline"
               label="Flat"
-              value="A-101, GreenVille Estate"
+              value={`${user?.flatNumber}, ${user?.estateName}`}
               last
             />
           </View>
@@ -272,7 +274,7 @@ const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: COLORS.background },
   scroll: { flex: 1 },
   scrollContent: {
-    paddingTop: Platform.OS === 'ios' ? 60 : StatusBar.currentHeight ? StatusBar.currentHeight + 16 : 48,
+    paddingTop: SPACING.xl,
     paddingHorizontal: SPACING.xl,
     paddingBottom: SPACING.massive,
   },
